@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { subscribeToAuthState } from "./lib/auth";
+import { useAuthStore } from "@/store/authStore";
 
 // 레이아웃
 import MainLayout from "@/layout/MainLayout";
@@ -10,11 +11,11 @@ import HomePage from "@/pages/HomePage";
 import LoginPage from "@/pages/LoginPage";
 import SignUpPage from "@/pages/SignUpPage";
 import PostWritePage from "./pages/PostWritePage";
+import PostDetailPage from "./pages/PostDetailPage";
+import PostEditPage from "./pages/PostEditPage";
 
 // 공통 컴포넌트
-import ProtectedRoute from "./components/ProtectedRoute";
-
-import { useAuthStore } from "@/store/authStore";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 function App() {
     const { isLoading, setUser, setIsLoading } = useAuthStore();
@@ -25,7 +26,6 @@ function App() {
             setIsLoading(false);
         });
 
-        // 클린업: 컴포넌트 언마운트 시 구독 해제
         return () => unsubscribe();
     }, [setUser, setIsLoading]);
 
@@ -50,6 +50,8 @@ function App() {
                 {/* 레이아웃이 적용되는 라우트 */}
                 <Route element={<MainLayout />}>
                     <Route path="/" element={<HomePage />} />
+                    <Route path="/posts/:id" element={<PostDetailPage />} />
+
                     {/* 보호된 라우트 - 로그인 필요 */}
                     <Route
                         path="/write"
@@ -59,9 +61,17 @@ function App() {
                             </ProtectedRoute>
                         }
                     />
+                    <Route
+                        path="/posts/:id/edit"
+                        element={
+                            <ProtectedRoute>
+                                <PostEditPage />
+                            </ProtectedRoute>
+                        }
+                    />
                 </Route>
 
-                {/* 레이아웃 없이 표시되는 인증 페이지 */}
+                {/* 인증 페이지 */}
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignUpPage />} />
             </Routes>

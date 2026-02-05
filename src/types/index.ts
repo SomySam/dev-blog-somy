@@ -76,31 +76,14 @@ export const CATEGORY_LABELS: Record<Category, string> = {
  * Day 1 기능명세서: FUNC-002 (게시글 작성)
  */
 export interface Post {
-    /** Firestore 문서 ID (자동 생성) */
     id: string;
-
-    /** 게시글 제목 (1~100자) - Day 1 기능명세서 참고 */
     title: string;
-
-    /** 게시글 본문 내용 */
     content: string;
-
-    /** 카테고리 (선택사항) */
     category: Category | null;
-
-    /** 작성자 UID (User.uid 참조) */
     authorId: string;
-
-    /** 작성자 이메일 (화면 표시용) */
     authorEmail: string;
-
-    /** 작성자 표시 이름 */
     authorDisplayName: string | null;
-
-    /** 작성 일시 - Firestore Timestamp 타입 사용 */
     createdAt: Timestamp;
-
-    /** 수정 일시 */
     updatedAt: Timestamp;
 }
 
