@@ -17,6 +17,11 @@ import PostEditPage from "./pages/PostEditPage";
 // 공통 컴포넌트
 import ProtectedRoute from "@/components/ProtectedRoute";
 
+// TanStack Query Client 설정
+import { QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { queryClient } from "./lib/queryClient";
+
 function App() {
     const { isLoading, setUser, setIsLoading } = useAuthStore();
 
@@ -45,37 +50,40 @@ function App() {
     }
 
     return (
-        <BrowserRouter>
-            <Routes>
-                {/* 레이아웃이 적용되는 라우트 */}
-                <Route element={<MainLayout />}>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/posts/:id" element={<PostDetailPage />} />
+        <QueryClientProvider client={queryClient}>
+            <BrowserRouter>
+                <Routes>
+                    {/* 레이아웃이 적용되는 라우트 */}
+                    <Route element={<MainLayout />}>
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/posts/:id" element={<PostDetailPage />} />
 
-                    {/* 보호된 라우트 - 로그인 필요 */}
-                    <Route
-                        path="/write"
-                        element={
-                            <ProtectedRoute>
-                                <PostWritePage />
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route
-                        path="/posts/:id/edit"
-                        element={
-                            <ProtectedRoute>
-                                <PostEditPage />
-                            </ProtectedRoute>
-                        }
-                    />
-                </Route>
+                        {/* 보호된 라우트 - 로그인 필요 */}
+                        <Route
+                            path="/write"
+                            element={
+                                <ProtectedRoute>
+                                    <PostWritePage />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/posts/:id/edit"
+                            element={
+                                <ProtectedRoute>
+                                    <PostEditPage />
+                                </ProtectedRoute>
+                            }
+                        />
+                    </Route>
 
-                {/* 인증 페이지 */}
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/signup" element={<SignUpPage />} />
-            </Routes>
-        </BrowserRouter>
+                    {/* 인증 페이지 */}
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/signup" element={<SignUpPage />} />
+                </Routes>
+            </BrowserRouter>
+            <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
     );
 }
 
