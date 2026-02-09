@@ -22,9 +22,20 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { queryClient } from "./lib/queryClient";
 
+// 다크모드 적용
+import { useTheme } from "@/hooks/useTheme";
+
+// 토스트 알림 컨포넌트
+import { Toaster } from "@/components/ui/sonner";
+// 페이지 로딩
+import PageLoading from "@/components/PageLoading";
+// 404 페이지
+import NotFoundPage from "@/pages/NotFoundPage";
+
 function App() {
     const { isLoading, setUser, setIsLoading } = useAuthStore();
-
+    // 다크모드 훅 호출
+    useTheme();
     useEffect(() => {
         const unsubscribe = subscribeToAuthState((user) => {
             setUser(user);
@@ -36,17 +47,7 @@ function App() {
 
     // 인증 상태 로딩 중
     if (isLoading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <div className="text-center">
-                    <div
-                        className="w-8 h-8 border-4 border-blue-600 border-t-transparent 
-                        rounded-full animate-spin mx-auto"
-                    ></div>
-                    <p className="mt-4 text-gray-600">로딩 중...</p>
-                </div>
-            </div>
-        );
+        return <PageLoading message="사용자 정보를 불러오는 중입니다..." />;
     }
 
     return (
@@ -80,8 +81,17 @@ function App() {
                     {/* 인증 페이지 */}
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/signup" element={<SignUpPage />} />
+                    {/* 404 페이지 */}
+                    <Route path="*" element={<NotFoundPage />} />
                 </Routes>
             </BrowserRouter>
+            {/* Toast 알림 */}
+            <Toaster
+                position="top-right"
+                toastOptions={{
+                    duration: 2000,
+                }}
+            />
             <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
     );

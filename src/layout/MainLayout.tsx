@@ -3,15 +3,15 @@ import Header from "@/components/Header";
 
 function Layout() {
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
+        <div className="min-h-screen flex flex-col">
             <Header />
 
-            <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-8">
+            <main className="container-main py-8 flex-1 ">
                 <Outlet />
             </main>
 
-            <footer className="bg-white border-t">
-                <div className="max-w-4xl mx-auto px-4 py-4 text-center text-gray-500 text-sm">
+            <footer className="border-t">
+                <div className="container-main text-center text-sm py-8">
                     © 2025 My Dev Blog. Built with React + Firebase
                 </div>
             </footer>

@@ -41,7 +41,7 @@ function PostCard({ post }: PostCardProps) {
     };
 
     return (
-        <article className="bg-white rounded-lg shadow hover:shadow-md transition-shadow">
+        <article className="card">
             <Link to={`/posts/${post.id}`} className="block p-6">
                 {/* 카테고리 태그 */}
                 {post.category && (
@@ -54,7 +54,7 @@ function PostCard({ post }: PostCardProps) {
                 )}
 
                 {/* 제목 (Day 1: 최대 50자, 초과 시 "..." 처리) */}
-                <h2 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                <h2 className="text-lg font-semibold mb-2 line-clamp-2">
                     {post.title}
                 </h2>
 
