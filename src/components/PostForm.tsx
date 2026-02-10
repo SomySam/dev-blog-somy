@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useCallback, memo } from "react";
 import { AlertCircle } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import type { PostInput, Category } from "@/types";
 import { CATEGORY_LABELS } from "@/types";
-import { Card, CardContent } from "@/components/ui/card";
-// import {  CardHeader, CardTitle } from "@/components/ui/card";
+import { TITLE_MAX_LENGTH } from "@/constants";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -25,7 +25,7 @@ interface PostFormProps {
     isLoading?: boolean;
 }
 
-function PostForm({
+const PostForm = memo(function PostForm({
     initialData,
     onSubmit,
     submitLabel = "발행하기",
@@ -38,7 +38,25 @@ function PostForm({
     );
     const [error, setError] = useState<string | null>(null);
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleTitleChange = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => {
+            setTitle(e.target.value);
+        },
+        [],
+    );
+
+    const handleContentChange = useCallback(
+        (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+            setContent(e.target.value);
+        },
+        [],
+    );
+
+    const handleCategoryChange = useCallback((value: string) => {
+        setCategory(value ? (value as Category) : null);
+    }, []);
+
+    const handleSubmit = useCallback(async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
 
@@ -47,8 +65,8 @@ function PostForm({
             return;
         }
 
-        if (title.length > 100) {
-            setError("제목은 100자 이내로 입력해주세요.");
+        if (title.length > TITLE_MAX_LENGTH) {
+            setError(`제목은 ${TITLE_MAX_LENGTH}자 이내로 입력해주세요.`);
             return;
         }
 
@@ -67,7 +85,7 @@ function PostForm({
             setError("저장에 실패했습니다. 다시 시도해주세요.");
             console.error("PostForm handleSubmit error:", err);
         }
-    };
+    }, [title, content, category, onSubmit]);
 
     const categories: Category[] = [
         "javascript",
@@ -79,11 +97,11 @@ function PostForm({
 
     return (
         <Card className="w-full max-w-4xl mx-auto">
-            {/* <CardHeader>
+            <CardHeader>
                 <CardTitle className="text-xl">
                     {initialData ? "게시글 수정" : "새 게시글 작성"}
                 </CardTitle>
-            </CardHeader> */}
+            </CardHeader>
             <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* 에러 메시지 */}
@@ -101,12 +119,14 @@ function PostForm({
                             id="title"
                             type="text"
                             value={title}
-                            onChange={(e) => setTitle(e.target.value)}
+                            onChange={handleTitleChange}
                             placeholder="게시글 제목을 입력하세요"
-                            maxLength={100}
+                            maxLength={TITLE_MAX_LENGTH}
                             className="h-11"
                         />
-                        <p className="text-xs text-right">{title.length}/100</p>
+                        <p className="text-xs text-right">
+                            {title.length}/{TITLE_MAX_LENGTH}
+                        </p>
                     </div>
 
                     {/* 카테고리 선택 */}
@@ -114,9 +134,7 @@ function PostForm({
                         <Label htmlFor="category">카테고리 (선택)</Label>
                         <Select
                             value={category || ""}
-                            onValueChange={(value) =>
-                                setCategory(value ? (value as Category) : null)
-                            }
+                            onValueChange={handleCategoryChange}
                         >
                             <SelectTrigger className="w-full h-11">
                                 <SelectValue placeholder="카테고리 선택" />
@@ -137,7 +155,7 @@ function PostForm({
                         <Textarea
                             id="content"
                             value={content}
-                            onChange={(e) => setContent(e.target.value)}
+                            onChange={handleContentChange}
                             placeholder="게시글 내용을 입력하세요"
                             rows={15}
                             className="min-h-[300px] resize-y"
@@ -166,6 +184,6 @@ function PostForm({
             </CardContent>
         </Card>
     );
-}
+});
 
 export default PostForm;

@@ -19,6 +19,10 @@ dist-ssr
 docs
 *copy*
 
+# zip 압축파일 제거
+*.zip
+
+
 
 # Editor directories and files
 .vscode/*

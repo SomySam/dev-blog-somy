@@ -1,26 +1,27 @@
+import { memo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { logout } from "@/lib/auth";
 import { useAuthStore } from "@/store/authStore";
-// 토글 버튼 컴포넌트 임포트
+import { ROUTES } from "@/constants";
 import ThemeToggle from "./ThemeToggle";
 
-function Header() {
+const Header = memo(function Header() {
     const user = useAuthStore((state) => state.user);
 
-    const handleLogout = async () => {
+    const handleLogout = useCallback(async () => {
         try {
             await logout();
         } catch (error) {
             console.error("로그아웃 실패:", error);
         }
-    };
+    }, []);
 
     return (
         <header className="header">
             <div className="container-main">
                 <div className="flex items-center justify-between h-16">
                     {/* 로고 */}
-                    <Link to="/" className="text-xl font-bold">
+                    <Link to={ROUTES.HOME} className="text-xl font-bold">
                         📝 My Dev Blog
                     </Link>
 
@@ -29,13 +30,12 @@ function Header() {
                         {user ? (
                             // 로그인 상태
                             <>
-                                <span className="text-sm text-gray-600">
+                                <span className="text-sm">
                                     {user.displayName || user.email}
                                 </span>
                                 <button
                                     onClick={handleLogout}
-                                    className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900
-                           transition-colors"
+                                    className="btn-ghost"
                                 >
                                     로그아웃
                                 </button>
@@ -43,17 +43,12 @@ function Header() {
                         ) : (
                             // 비로그인 상태
                             <>
-                                <Link
-                                    to="/login"
-                                    className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900
-                           transition-colors"
-                                >
+                                <Link to={ROUTES.LOGIN} className="btn-ghost">
                                     로그인
                                 </Link>
                                 <Link
-                                    to="/signup"
-                                    className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg
-                           hover:bg-blue-700 transition-colors"
+                                    to={ROUTES.SIGNUP}
+                                    className="btn-primary"
                                 >
                                     회원가입
                                 </Link>
@@ -66,6 +61,6 @@ function Header() {
             </div>
         </header>
     );
-}
+});
 
 export default Header;

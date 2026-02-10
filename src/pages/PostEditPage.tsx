@@ -1,14 +1,4 @@
-// day7 10.4 게시글 수정 페이지 TanStack Query 적용 리팩토링
-// src/pages/PostEditPage.tsx
-
-/**
- * 게시글 수정 페이지
- *
- * Day 1 요구사항: POST-004
- *
- * TanStack Query 적용으로 리팩토링
- */
-
+import { useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/authStore";
 import PostForm from "@/components/PostForm";
@@ -22,32 +12,27 @@ function PostEditPage() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const user = useAuthStore((state) => state.user);
-    // 기존 게시글 조회
     const { data: post, isLoading, error } = usePost(id);
-
-    // 수정 뮤테이션
     const updatePostMutation = useUpdatePost();
 
-    /**
-     * 게시글 수정 핸들러
-     */
-    const handleSubmit = async (data: PostInput) => {
-        if (!id) return;
+    const handleSubmit = useCallback(
+        async (data: PostInput) => {
+            if (!id) return;
 
-        updatePostMutation.mutate(
-            { postId: id, input: data },
-            {
-                onSuccess: () => {
-                    navigate(`/posts/${id}`);
+            updatePostMutation.mutate(
+                { postId: id, input: data },
+                {
+                    onSuccess: () => {
+                        navigate(`/posts/${id}`);
+                    },
                 },
-            },
-        );
-    };
+            );
+        },
+        [id, updatePostMutation, navigate],
+    );
 
-    // 권한 체크
     const hasPermission = user && post && user.uid === post.authorId;
 
-    // 로딩 상태
     if (isLoading) {
         return (
             <div className="max-w-2xl mx-auto">
@@ -60,7 +45,6 @@ function PostEditPage() {
         );
     }
 
-    // 에러 또는 권한 없음
     if (error || !post || !hasPermission) {
         return (
             <div className="max-w-2xl mx-auto">
@@ -82,7 +66,7 @@ function PostEditPage() {
     }
 
     return (
-        <div>
+        <div className="max-w-full mx-auto">
             <h1 className="text-2xl font-bold mb-6">글 수정</h1>
 
             <PostForm

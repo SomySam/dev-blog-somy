@@ -1,10 +1,4 @@
-/**
- * 게시글 목록 컴포넌트
- *
- * Day 1 컴포넌트 구조도: HomePage > PostList
- * Day 1 기능명세서 FUNC-003 (게시글 목록 조회)
- */
-
+import { memo } from "react";
 import type { PostSummary } from "@/types";
 import PostCard from "./PostCard";
 
@@ -13,8 +7,10 @@ interface PostListProps {
     isLoading?: boolean;
 }
 
-function PostList({ posts, isLoading = false }: PostListProps) {
-    // 로딩 상태 (Day 1 기능명세서: 로딩 중 스켈레톤 UI 표시)
+const PostList = memo(function PostList({
+    posts,
+    isLoading = false,
+}: PostListProps) {
     if (isLoading) {
         return (
             <div className="space-y-4">
@@ -32,7 +28,6 @@ function PostList({ posts, isLoading = false }: PostListProps) {
         );
     }
 
-    // 빈 목록 (Day 1 기능명세서: 게시글 없음 표시)
     if (posts.length === 0) {
         return (
             <div className="bg-white rounded-lg shadow p-12 text-center">
@@ -46,7 +41,6 @@ function PostList({ posts, isLoading = false }: PostListProps) {
         );
     }
 
-    // 게시글 목록
     return (
         <div className="space-y-4">
             {posts.map((post) => (
@@ -54,6 +48,6 @@ function PostList({ posts, isLoading = false }: PostListProps) {
             ))}
         </div>
     );
-}
+});
 
 export default PostList;

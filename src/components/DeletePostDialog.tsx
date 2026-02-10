@@ -1,3 +1,4 @@
+import { memo } from "react";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -16,7 +17,10 @@ interface DeletePostDialogProps {
     isLoading?: boolean;
 }
 
-function DeletePostDialog({ onConfirm, isLoading }: DeletePostDialogProps) {
+const DeletePostDialog = memo(function DeletePostDialog({
+    onConfirm,
+    isLoading,
+}: DeletePostDialogProps) {
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -46,6 +50,6 @@ function DeletePostDialog({ onConfirm, isLoading }: DeletePostDialogProps) {
             </AlertDialogContent>
         </AlertDialog>
     );
-}
+});
 
 export default DeletePostDialog;

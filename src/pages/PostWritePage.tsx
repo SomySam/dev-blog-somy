@@ -1,11 +1,4 @@
-/**
- * 글쓰기 페이지
- *
- * Day 1 요구사항: POST-001
- *
- * TanStack Query 적용으로 리팩토링
- */
-
+import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/authStore";
 import { useCreatePost } from "@/hooks/mutations";
@@ -15,28 +8,26 @@ import type { PostInput } from "@/types";
 function PostWritePage() {
     const user = useAuthStore((state) => state.user);
     const navigate = useNavigate();
-
-    // 생성 뮤테이션
     const createPostMutation = useCreatePost();
 
-    /**
-     * 게시글 작성 핸들러
-     */
-    const handleSubmit = async (data: PostInput) => {
-        if (!user) return;
+    const handleSubmit = useCallback(
+        async (data: PostInput) => {
+            if (!user) return;
 
-        createPostMutation.mutate(
-            { input: data, user },
-            {
-                onSuccess: (postId) => {
-                    navigate(`/posts/${postId}`);
+            createPostMutation.mutate(
+                { input: data, user },
+                {
+                    onSuccess: (postId) => {
+                        navigate(`/posts/${postId}`);
+                    },
                 },
-            },
-        );
-    };
+            );
+        },
+        [user, createPostMutation, navigate],
+    );
 
     return (
-        <div>
+        <div className="max-w-full mx-auto">
             <h1 className="text-2xl font-bold mb-6">새 글 작성</h1>
 
             <PostForm
