@@ -1,17 +1,26 @@
 import { memo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import type { PostSummary } from "@/types";
 import { CATEGORY_LABELS } from "@/types";
-import { getPostDetailPath } from "@/constants";
+import { getPostDetailPath, getProfilePath } from "@/constants";
 import { formatDateShort, getDisplayName } from "@/utils/formatters";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import LikeButton from "./LikeButton";
 
 interface PostCardProps {
     post: PostSummary;
 }
 
 const PostCard = memo(function PostCard({ post }: PostCardProps) {
+    const navigate = useNavigate();
+
+    const handleAuthorClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        navigate(getProfilePath(post.authorId));
+    };
+
     return (
         <Card className="transition-colors hover:bg-muted/50">
             <Link
@@ -30,7 +39,13 @@ const PostCard = memo(function PostCard({ post }: PostCardProps) {
                     </h2>
 
                     <div className="flex items-center text-sm text-muted-foreground gap-2">
-                        <span>
+                        <span
+                            role="link"
+                            tabIndex={0}
+                            className="hover:underline cursor-pointer"
+                            onClick={handleAuthorClick}
+                            onKeyDown={(e) => e.key === "Enter" && handleAuthorClick(e as unknown as React.MouseEvent)}
+                        >
                             {getDisplayName(
                                 post.authorEmail,
                                 post.authorDisplayName,
@@ -38,6 +53,12 @@ const PostCard = memo(function PostCard({ post }: PostCardProps) {
                         </span>
                         <span>·</span>
                         <span>{formatDateShort(post.createdAt)}</span>
+                        <span>·</span>
+                        <LikeButton
+                            postId={post.id}
+                            likeCount={post.likeCount}
+                            size="sm"
+                        />
                     </div>
                 </CardContent>
 

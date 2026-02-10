@@ -19,6 +19,7 @@ const PostWritePage = lazy(() => import("./pages/PostWritePage"));
 const PostDetailPage = lazy(() => import("./pages/PostDetailPage"));
 const PostEditPage = lazy(() => import("./pages/PostEditPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
+const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 
 function App() {
     const { isLoading, setUser, setIsLoading } = useAuthStore();
@@ -61,6 +62,14 @@ function App() {
                                 element={
                                     <ProtectedRoute>
                                         <PostEditPage />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path={ROUTES.PROFILE}
+                                element={
+                                    <ProtectedRoute>
+                                        <ProfilePage />
                                     </ProtectedRoute>
                                 }
                             />

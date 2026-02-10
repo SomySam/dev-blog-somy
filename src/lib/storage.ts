@@ -1,9 +1,3 @@
-/**
- * Firebase Storage 유틸리티 함수
- *
- * 이미지 및 파일 업로드/삭제 기능을 제공합니다.
- */
-
 import {
     ref,
     uploadBytes,
@@ -162,4 +156,28 @@ export async function deleteFile(storagePath: string): Promise<void> {
  */
 export async function deleteFiles(storagePaths: string[]): Promise<void> {
     await Promise.all(storagePaths.map((path) => deleteFile(path)));
+}
+
+/**
+ * 프로필 이미지 업로드
+ *
+ * @param file 업로드할 이미지 파일
+ * @param userId 사용자 ID
+ * @returns 업로드된 이미지 다운로드 URL
+ */
+export async function uploadProfileImage(
+    file: File,
+    userId: string,
+): Promise<string> {
+    const validation = validateFile(file);
+    if (!validation.valid) {
+        throw new Error(validation.error);
+    }
+
+    const extension = file.name.split(".").pop() || "jpg";
+    const storagePath = `profile-images/${userId}/avatar.${extension}`;
+    const storageRef = ref(storage, storagePath);
+
+    await uploadBytes(storageRef, file);
+    return getDownloadURL(storageRef);
 }

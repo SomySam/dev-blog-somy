@@ -38,6 +38,7 @@ export async function createPost(
         createdAt: now,
         updatedAt: now,
         ...(thumbnailUrl && { thumbnailUrl }), // 썸네일 URL이 있을 때만 추가
+        likeCount: 0,
     };
 
     const docRef = await addDoc(postsCollection, postData);
@@ -60,10 +61,12 @@ export async function getPosts(limitCount: number = 5): Promise<PostSummary[]> {
             id: doc.id,
             title: data.title,
             category: data.category,
+            authorId: data.authorId,
             authorEmail: data.authorEmail,
             authorDisplayName: data.authorDisplayName,
             createdAt: data.createdAt,
-            thumbnailUrl: data.thumbnailUrl, // 썸네일 URL 추가
+            thumbnailUrl: data.thumbnailUrl,
+            likeCount: data.likeCount ?? 0,
         };
     });
 }
@@ -76,9 +79,11 @@ export async function getPost(postId: string): Promise<Post | null> {
         return null;
     }
 
+    const data = docSnap.data();
     return {
         id: docSnap.id,
-        ...docSnap.data(),
+        ...data,
+        likeCount: data.likeCount ?? 0,
     } as Post;
 }
 
@@ -122,10 +127,12 @@ export async function getPostsByCategory(
             id: doc.id,
             title: data.title,
             category: data.category,
+            authorId: data.authorId,
             authorEmail: data.authorEmail,
             authorDisplayName: data.authorDisplayName,
             createdAt: data.createdAt,
-            thumbnailUrl: data.thumbnailUrl, // 썸네일 URL 추가
+            thumbnailUrl: data.thumbnailUrl,
+            likeCount: data.likeCount ?? 0,
         };
     });
 }
@@ -170,10 +177,12 @@ export async function getPostsWithOptions(
             id: doc.id,
             title: data.title,
             category: data.category,
+            authorId: data.authorId,
             authorEmail: data.authorEmail,
             authorDisplayName: data.authorDisplayName,
             createdAt: data.createdAt,
-            thumbnailUrl: data.thumbnailUrl, // 썸네일 URL 추가
+            thumbnailUrl: data.thumbnailUrl,
+            likeCount: data.likeCount ?? 0,
         };
     });
 
@@ -211,10 +220,12 @@ export function subscribeToPostsRealtime(
                     id: doc.id,
                     title: data.title,
                     category: data.category,
+                    authorId: data.authorId,
                     authorEmail: data.authorEmail,
                     authorDisplayName: data.authorDisplayName,
                     createdAt: data.createdAt,
-                    thumbnailUrl: data.thumbnailUrl, // 썸네일 URL 추가
+                    thumbnailUrl: data.thumbnailUrl,
+                    likeCount: data.likeCount ?? 0,
                 };
             });
 

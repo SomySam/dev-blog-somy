@@ -4,7 +4,7 @@ import { usePost } from "@/hooks/queries";
 import { useDeletePost } from "@/hooks/mutations";
 import { useAuthStore } from "@/store/authStore";
 import { CATEGORY_LABELS } from "@/types";
-import { ROUTES, getPostEditPath } from "@/constants";
+import { ROUTES, getPostEditPath, getProfilePath } from "@/constants";
 import { formatDateTime, getDisplayName } from "@/utils/formatters";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import DeletePostDialog from "@/components/DeletePostDialog";
 import CommentSection from "@/components/CommentSection";
+import LikeButton from "@/components/LikeButton";
 import ErrorMessage from "@/components/ErrorMessage";
 
 import DOMPurify from "dompurify"; // 추가된 부분
@@ -76,12 +77,15 @@ function PostDetailPage() {
                     <h1 className="text-2xl font-bold">{post.title}</h1>
                     <div className="flex items-center justify-between flex-wrap gap-4">
                         <div className="text-sm text-muted-foreground">
-                            <span>
+                            <Link
+                                to={getProfilePath(post.authorId)}
+                                className="hover:underline"
+                            >
                                 {getDisplayName(
                                     post.authorEmail,
                                     post.authorDisplayName,
                                 )}
-                            </span>
+                            </Link>
                             <span className="mx-2">·</span>
                             <span>{formatDateTime(post.createdAt)}</span>
                             {post.updatedAt.toMillis() !==
@@ -123,6 +127,10 @@ function PostDetailPage() {
                         }}
                     />
                 </CardContent>
+
+                <div className="px-6 pb-6">
+                    <LikeButton postId={post.id} likeCount={post.likeCount} />
+                </div>
             </Card>
             {id && <CommentSection postId={id} />}
             <div className="mt-6">
